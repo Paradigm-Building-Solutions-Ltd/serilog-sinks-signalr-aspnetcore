@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.SignalR", "src\Serilog.Sinks.SignalR\Serilog.Sinks.SignalR.csproj", "{0D51B456-A1B0-4048-9E90-E98CEB95E976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.SignalR", "src\Serilog.Sinks.SignalR\Serilog.Sinks.SignalR.csproj", "{F1DB53C6-93F7-47A7-862A-EAFEDB5B4AB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0D51B456-A1B0-4048-9E90-E98CEB95E976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D51B456-A1B0-4048-9E90-E98CEB95E976}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D51B456-A1B0-4048-9E90-E98CEB95E976}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D51B456-A1B0-4048-9E90-E98CEB95E976}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1DB53C6-93F7-47A7-862A-EAFEDB5B4AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1DB53C6-93F7-47A7-862A-EAFEDB5B4AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1DB53C6-93F7-47A7-862A-EAFEDB5B4AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1DB53C6-93F7-47A7-862A-EAFEDB5B4AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {17B5A95A-28D6-4318-86F1-3AA18D60434F}
 	EndGlobalSection
 EndGlobal
