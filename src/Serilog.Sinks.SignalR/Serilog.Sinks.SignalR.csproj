@@ -18,8 +18,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <RootNamespace>Serilog</RootNamespace>
-        <!--<TargetFrameworks>netstandard1.0;netstandard1.3;netstandard2.0</TargetFrameworks>-->
-        <TargetFrameworks>net46</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
   
     <ItemGroup>
@@ -36,9 +35,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNet.SignalR.Client" Version="2.4.1" />
-      <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.1" />
-      <PackageReference Include="Serilog" Version="2.8.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
+      <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.2.0" />
     </ItemGroup>
 

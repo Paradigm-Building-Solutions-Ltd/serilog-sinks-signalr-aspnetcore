@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Serilog.Sinks.PeriodicBatching;
 using LogEvent = Serilog.Sinks.SignalR.Data.LogEvent;
 
@@ -26,10 +26,10 @@ namespace Serilog.Sinks.SignalR
     public class SignalRSink : PeriodicBatchingSink
     {
         readonly IFormatProvider _formatProvider;
-        readonly IHubContext _context;
-        readonly string[] _groupNames;
+        readonly IHubContext<LogHub, ILogEventClient> _context;
+        readonly IReadOnlyList<string> _groupNames;
         readonly string[] _userIds;
-        readonly string[] _excludedConnectionIds;
+        readonly IReadOnlyList<string> _excludedConnectionIds;
 
         /// <summary>
         /// A reasonable default for the number of events posted in
@@ -52,13 +52,11 @@ namespace Serilog.Sinks.SignalR
         /// <param name="groupNames">Name of the Signalr group you are broadcasting the log event to. Default is All connections.</param>
         /// <param name="userIds">ID's of the Signalr Users you are broadcasting the log event to. Default is All Users.</param>
         /// <param name="excludedConnectionIds">Signalr connection ID's to exclude from broadcast.</param>
-        public SignalRSink(IHubContext context, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string[] groupNames = null, string[] userIds = null, string[] excludedConnectionIds = null)
+        public SignalRSink(IHubContext<LogHub, ILogEventClient> context, int batchPostingLimit, TimeSpan period, IFormatProvider formatProvider, string[] groupNames = null, string[] userIds = null, string[] excludedConnectionIds = null)
             : base(batchPostingLimit, period)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _formatProvider = formatProvider;
-            _context = context;
             _groupNames = groupNames;
             _userIds = userIds;
             _excludedConnectionIds = excludedConnectionIds ?? Array.Empty<string>();
@@ -77,17 +75,20 @@ namespace Serilog.Sinks.SignalR
 
             foreach (var logEvent in events)
             {
-                dynamic target;
-                // target the specified clients while opting out the excluded connections
-                if (_groupNames != null && _groupNames != Array.Empty<string>())
-                    target = _context.Clients.Groups(_groupNames, _excludedConnectionIds);
-                else if (_userIds != null && _userIds != Array.Empty<string>())
-                    target = _context.Clients.Users(_userIds);
-                else
-                    target = _context.Clients.AllExcept(_excludedConnectionIds);
+                var renderedLogEvent = new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider));
 
-                // send the broadcast to the targeted connections
-                target.sendLogEvent(new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
+                if (_groupNames != null && _groupNames != Array.Empty<string>())
+                {
+                    _context.Clients.Groups(_groupNames).ReceiveLogEvent(renderedLogEvent);
+                }
+                else if (_userIds != null && _userIds != Array.Empty<string>())
+                {
+                    _context.Clients.Users(_userIds).ReceiveLogEvent(renderedLogEvent);
+                }
+                else
+                {
+                    _context.Clients.AllExcept(_excludedConnectionIds).ReceiveLogEvent(renderedLogEvent);
+                }
             }
         }
     }

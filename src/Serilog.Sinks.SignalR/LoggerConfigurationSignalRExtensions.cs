@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.SignalR;
@@ -41,7 +41,7 @@ namespace Serilog
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration SignalR(
             this LoggerSinkConfiguration loggerConfiguration,
-            IHubContext context,
+            IHubContext<LogHub, ILogEventClient> context,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = SignalRSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
@@ -54,9 +54,9 @@ namespace Serilog
             if (context == null) throw new ArgumentNullException(nameof(context));
 
             var defaultedPeriod = period ?? SignalRSink.DefaultPeriod;
-            return loggerConfiguration.Sink(
-                new SignalRSink(context, batchPostingLimit, defaultedPeriod, formatProvider, groupNames, userIds, excludedConnectionIds),
-                restrictedToMinimumLevel);
+
+            var signalRSink = new SignalRSink(context, batchPostingLimit, defaultedPeriod, formatProvider, groupNames, userIds, excludedConnectionIds);
+            return loggerConfiguration.Sink(signalRSink, restrictedToMinimumLevel);
         }
 
         /// <summary>

@@ -14,7 +14,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.SignalR.Client;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
 using Serilog.Sinks.PeriodicBatching;
 using LogEvent = Serilog.Sinks.SignalR.Data.LogEvent;
 
@@ -27,7 +28,6 @@ namespace Serilog.Sinks.SignalR
     {
         readonly IFormatProvider _formatProvider;
         readonly HubConnection _connection;
-        readonly IHubProxy _hubProxy;
         readonly string[] _groupNames;
         readonly string[] _userIds;
 
@@ -61,10 +61,7 @@ namespace Serilog.Sinks.SignalR
             _groupNames = groupNames ?? Array.Empty<string>();
             _userIds = userIds ?? Array.Empty<string>();
 
-            _connection = new HubConnection(url);
-            _hubProxy = _connection.CreateHubProxy(hub);
-            // does not block, but will take some time to initialize
-            _connection.Start();
+            _connection = new HubConnectionBuilder().WithUrl(url).Build();
         }
 
         /// <summary>
@@ -73,24 +70,19 @@ namespace Serilog.Sinks.SignalR
         /// <param name="events">The events to emit.</param>
         /// <remarks>Override either <see cref="PeriodicBatchingSink.EmitBatch"/> or <see cref="PeriodicBatchingSink.EmitBatchAsync"/>,
         /// not both.</remarks>
-        protected override void EmitBatch(IEnumerable<Events.LogEvent> events)
+        protected override async Task EmitBatchAsync(IEnumerable<Events.LogEvent> events)
         {
             // This sink doesn't use batching to send events, instead only using
             // PeriodicBatchingSink to manage the worker thread; requires some consideration.
 
+            if (_connection.State == HubConnectionState.Disconnected)
+            {
+                await _connection.StartAsync();
+            }
+
             foreach (var logEvent in events)
             {
-                // send the log message to the hub
-                switch (_connection.State)
-                {
-                    case ConnectionState.Connected:
-                        _hubProxy.Invoke("receiveLogEvent", _groupNames, _userIds, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
-                        break;
-                    case ConnectionState.Disconnected:
-                        // attempt to restart the connection
-                        _connection.Start();
-                        break;
-                }
+                await _connection.InvokeAsync("receiveLogEvent", _groupNames, _userIds, new LogEvent(logEvent, logEvent.RenderMessage(_formatProvider)));
             }
         }
     }
