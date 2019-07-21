@@ -1,19 +1,19 @@
 # serilog-sinks-signalr
 
-[![Build status](https://ci.appveyor.com/api/projects/status/292m45fa26x5iyfs/branch/master?svg=true)](https://ci.appveyor.com/project/serilog/serilog-sinks-signalr/branch/master)
+A Serilog sink for ASP.NET CORE that writes events to a SignalR Hub.
 
-A Serilog sink that writes events to a SignalR Hub
+This library is a port of the original [serilog-sinks-signalr](https://github.com/serilog/serilog-sinks-signalr) that support [Microsoft.AspNetCore.SignalR](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR/)
 
 ## Configuration from hub application
 
-From within the SignalR server application with a hub named MyHub:
+From within the SignalR server application with a hub retrieved from the application services:
 
 ```csharp
-var hubContext = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+var logHub = app.ApplicationServices.GetService<IHubContext<Serilog.Sinks.SignalR.LogHub, ILogEventClient>>();
 
 Log.Logger = new LoggerConfiguration()
 .MinimumLevel.Verbose()
-.WriteTo.SignalR(hubContext,
+.WriteTo.SignalR(logHub,
   Serilog.Events.LogEventLevel.Information,
   groupNames: new[] { "CustomGroup"}, // default is null
   userIds: new[] { "JaneD1234" }, // default is null
