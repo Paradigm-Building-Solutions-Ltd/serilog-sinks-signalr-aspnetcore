@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Title>Serilog.Sinks.SignalR</Title>
-        <Description>Serilog sink for SignalR</Description>
+        <Title>Serilog.Sinks.SignalR.AspNetCore</Title>
+        <Description>Serilog sink for SignalR ASP.NET Core</Description>
         <Copyright>Copyright © Serilog Contributors 2013</Copyright>
         <PackageProjectUrl>http://serilog.net</PackageProjectUrl>
         <PackageIconUrl>http://serilog.net/images/serilog-sink-nuget.png</PackageIconUrl>
@@ -19,6 +19,7 @@
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <RootNamespace>Serilog</RootNamespace>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Serilog.Sinks.SignalR.AspNetCore</AssemblyName>
     </PropertyGroup>
   
     <ItemGroup>
