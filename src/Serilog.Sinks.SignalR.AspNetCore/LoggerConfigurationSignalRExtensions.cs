@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Microsoft.AspNetCore.SignalR;
+
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.SignalR;
